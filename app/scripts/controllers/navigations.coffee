@@ -10,11 +10,14 @@ class window.Navigations
     if link and link.page_object == "navigation"
       @url = link.href
   
-      @load()
-
 
   load: ->
     # Load the navigations content from the url
+    navigations = []
+    auth_token = window.session.auth_token()
+
+    $(document).ajaxSend (e, xhr, options) ->
+      xhr.setRequestHeader "Authorization", auth_token    
 
     $.ajax
       url: @url
@@ -40,12 +43,12 @@ class window.Navigations
 
 
   clear: ->
-
-    $(NAVIGATION_CONTAINER).html("")
+    $(NAVIGATION_CONTAINER).html ""
 
   render: ->
 
-
+    # Clear the current nav
+    window.navigations.clear()
 
     # Highlight the initial navigation link
     # Find the current nav link and add the active class
@@ -53,7 +56,6 @@ class window.Navigations
     if !/#/.test current_hash
       current_hash = "#/"
 
-    @clear()
     for navigation in navigations
 
       active = ""

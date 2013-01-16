@@ -9,22 +9,23 @@ class window.Router
 
   route_to_current_hash: (hash) ->
 
+    if hash == "/"
+      hash = ""
+
     if hash.split("/").length > 0 && hash.length > 0
       route = hash.split("/")
     else 
-      route = ("/").split("/")
+      route = ["", "___root"]
       
     if route
 
-      if route.length < 1
-        route[1] = ""
-
-      auth_token = window.session.auth_token
+      auth_token = window.session.auth_token()
 
       $(document).ajaxSend (e, xhr, options) ->
         xhr.setRequestHeader "Authorization", auth_token
 
       # Hit the api with the supplied friendly url, then route based on the result
+      
       $.ajax
         url: API_URL + "/" + route[1]
         dataType: "json"
@@ -34,15 +35,6 @@ class window.Router
 
           # We don't know yet if its a collection or an item
           if json.item
-
-            switch json.item.page_object
-              when "page"
-                window.pages.load_page json.item.data, json.item.page_object
-                
-              when "site"
-                window.pages.load_page json.item.data, json.item.page_object
-                
-
+            window.pages.load_page json.item
           else
-
             alert json.item.page_object

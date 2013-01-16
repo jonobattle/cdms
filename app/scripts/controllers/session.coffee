@@ -168,20 +168,23 @@ class window.Session
   logout: ->
 
     if logout_url
-      $(document).ajaxSend (e, xhr, options) ->
-        xhr.setRequestHeader "Authorization", ""      
 
-      $.ajax
-        url: logout_url
-        dataType: "json"
-        type: "GET"
-        
-        success: (json) ->
+      $(".session-bar").fadeOut "fast", ->
 
-          if json and json.item and json.item.page_object == "session"
-            window.session.stop_ping()
-            window.session.kill_auth_token()
-            window.session.load()
+        $(document).ajaxSend (e, xhr, options) ->
+          xhr.setRequestHeader "Authorization", ""      
+
+        $.ajax
+          url: logout_url
+          dataType: "json"
+          type: "GET"
+          
+          success: (json) ->
+
+            if json and json.item and json.item.page_object == "session"
+              window.session.stop_ping()
+              window.session.kill_auth_token()
+              window.session.load()
 
 
 
@@ -189,52 +192,67 @@ class window.Session
   render: ->
 
     if window.session.auth_token() != null and account != null
-
       @render_logged_in()
-
     else
-
       @render_not_logged_in()
 
 
 
   render_logged_in: ->
 
+    # Add padding to the page to allow for the session bar
+    $(".navbar-wrapper").animate {paddingTop: 70}
+
     if session_page
 
-      $(".session-form").fadeOut "fast", ->
+      if $(".session-bar").length < 1
+        $(SESSION_CONTAINER).mk(".navbar",
+          $(SESSION_CONTAINER).mk(".navbar-inner.session-bar")
+        )
+        $(".session-bar").hide()
+
+      $(".session-bar").fadeOut "fast", ->
         $(".session-form").remove()
 
-      $(SESSION_CONTAINER).html ""
-      $(SESSION_CONTAINER).mk(".navbar",
-        $(SESSION_CONTAINER).mk(".navbar-inner.navbar-inverse.session-bar",
-          $.mk("ul.nav",
-            $.mk("li.dropdown",
-              $.mk("a.dropdown-toggle[href=#][data-toggle=dropdown]","Pages")
-              $.mk("ul.dropdown-menu",
-                $.mk("li.divider")
-                $.mk("li", "New Page")
+        $(SESSION_CONTAINER).html ""
+        $(SESSION_CONTAINER).mk(".navbar",
+          $(SESSION_CONTAINER).mk(".navbar-inner.navbar-inverse.session-bar",
+            $.mk("ul.nav",
+              $.mk("li.dropdown",
+                $.mk("a.dropdown-toggle[href=#][data-toggle=dropdown]","Pages")
+                $.mk("ul.dropdown-menu",
+                  $.mk("li.divider")
+                  $.mk("li",
+                    $.mk("a", "New Page")
+                  )
+                )
               )
             )
-          )
-          $.mk("form.navbar-form.pull-right",
-            $.mk('button#session_logout.btn.btn-info', "Logout")
+            $.mk("form.navbar-form.pull-right",
+              $.mk('button#session_logout.btn.btn-info', "Logout")
+            )
           )
         )
-      )
 
-      # Build logged in interactions
-      $("button#session_logout").die "click"
-      $("button#session_logout").live "click", (e) ->
+        $(".session-bar").fadeIn "fast"
 
-        # Log out of the session on the api, and then prompt the front end to reload
-        event.preventDefault()
-        window.session.logout()
 
+        window.navigations.load()
+        window.router.route_to_current_hash window.location.hash
+
+        # Build logged in interactions
+        $("button#session_logout").die "click"
+        $("button#session_logout").live "click", (e) ->
+
+          # Log out of the session on the api, and then prompt the front end to reload
+          event.preventDefault()
+          window.session.logout()
 
 
 
   render_not_logged_in: ->
+
+    $(".navbar-wrapper").animate {paddingTop: 0}
 
     if session_page
       @clear()
@@ -248,6 +266,8 @@ class window.Session
           $.mk("form.navbar-form.session-form.pull-right")
         )
       )
+
+      $(".session-bar").hide()
 
       # Expected values
       email_name = null
@@ -266,7 +286,11 @@ class window.Session
 
 
       $(".session-form").mk('button[name=login].btn.btn-info', "Go")
+      $(".session-bar").fadeIn "fast"
 
+      window.navigations.load()
+      window.router.route_to_current_hash window.location.hash
+      
       # Create the interactions for the session controls
 
       # Prepare login form on focus
@@ -288,7 +312,7 @@ class window.Session
 
           $(".session-bar").fadeOut "fast", ->
             $(".session-bar").html("")
-            $(".session-bar").mk(".loading-session", "Loading session ...")
+            $(".session-bar").mk(".brand", "loading...")
             $(".session-bar").fadeIn "fast", ->
 
               window.session.attempt_login email, password
