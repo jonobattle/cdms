@@ -1,0 +1,86 @@
+.session-wrapper {
+
+  padding: 10px 0;
+  background-color: #333;
+
+  .navbar {
+    margin: 0;
+
+    .navbar-inner {
+      background-color: #333; /* background color will be black for all browsers */
+      background-image: none;
+      background-repeat: no-repeat;
+      filter: none;      
+      border: none;
+
+      .brand {
+        color: #fff;
+        text-shadow: none;
+      }
+
+    }
+
+  }
+
+  .session-form {
+    
+    padding: 0;
+    line-height: 38px;
+
+    // input {
+    //   margin: 0;
+    //   border: 1px solid #ccc;
+    //   border-radius: 0;
+
+    input.alert {
+      border: 1px solid red;
+      background-color: lighten(red, 45%);
+    }
+
+    // }
+
+
+    .loading-session {
+      text-align: center;
+      color: #fff;
+      padding: 10px;
+      line-height: 40px;
+      font-size: 18px;
+      color: #999;
+    }
+
+
+    input[type=text], input[type=password] {
+      margin: 0 5px 0 0;
+    }
+
+    button {
+      margin: 0;
+    }
+
+
+
+    // button {
+    //   height: 30px;
+    //   width: 30px;
+
+    //   padding: 0;
+    //   line-height: 30px;
+    //   text-align: center;
+    //   border: 1px solid #444;
+    //   border-radius: 0;
+
+    //   background-color: #555;
+    //   color: #fff;
+
+    //   margin-left: 5px;
+
+    // }
+
+  }
+
+}
+
+
+
+
