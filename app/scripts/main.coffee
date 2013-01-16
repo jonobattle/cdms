@@ -23,7 +23,7 @@ require [ "controllers/app",
           "models/page", 
           "models/account",
           "models/navigation", 
-          "vendor/mkay/mkay", 
+          "vendor/mkay", 
           "vendor/jquery.cookie", 
           "vendor/jquery.address-1.5.min"], ->
 
